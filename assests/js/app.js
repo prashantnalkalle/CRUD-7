@@ -1,0 +1,256 @@
+const cl = console.log;
+const inputform = document.getElementById('inputform')
+const title = document.getElementById('title')
+const body = document.getElementById('body')
+const userId = document.getElementById('userId')
+const Addpost = document.getElementById('Addpost')
+const Updatepost = document.getElementById('Updatepost')
+const CardContainer = document.getElementById('CardContainer')
+const spinner = document.getElementById('spinner')
+
+
+
+let postArr =[]
+
+let Base_Url = `https://jsonplaceholder.typicode.com/posts`
+
+
+function snackbar(msg,icon){
+    swal.fire({
+        title : msg,
+        icon : icon,
+        timer : 3000
+    })
+}
+
+
+function fetchposts(){
+    spinner.classList.remove('d-none')
+    
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('GET',Base_Url)
+
+    xhr.send(null)
+
+    xhr.onload = function (){
+        if(xhr.status >= 200 && xhr.status <=299){
+            postArr = JSON.parse(xhr.response)
+
+
+            CreatePostCards(postArr.reverse())
+
+        }
+    }
+
+
+}
+
+fetchposts()
+
+
+function CreatePostCards(arr){
+    let result =''
+
+    arr.forEach(ele => {
+        result +=`<div class="col-md-6 my-4" id='${ele.id}'>
+					<div class="card h-100 ">
+						<div class="card-header bg-primary text-white">
+							<h2>${ele.title}</h2>
+						</div>
+						<div class="card-body  ">
+							<p>${ele.body}</p>
+						</div>
+						<div class="card-footer bg-light d-flex justify-content-between">
+							<button class="btn btn-success btn-sm" onclick="Onedit(this)">Edit</button>
+							<button type="button" class="btn btn-danger btn-sm" onclick="Onremove(this)">Remove</button>
+						</div>
+					</div>
+				</div>`
+    });
+    CardContainer.innerHTML = result
+
+    spinner.classList.add('d-none')
+
+}
+
+function onsubmit(ele){
+    spinner.classList.remove('d-none')
+
+    ele.preventDefault()
+
+    let newPost = {
+        title : title.value,
+        body : body.value,
+        userId : userId.value
+    }
+
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('POST',Base_Url)
+
+    xhr.send(JSON.stringify(newPost))
+
+    xhr.onload = function(){
+        if(xhr.status >=200 && xhr.status <= 299){
+            let res = JSON.parse(xhr.response)
+
+            CreateNewPost(newPost,res)
+        }
+    }
+
+
+
+
+}
+
+
+
+function CreateNewPost(newPost,res){
+    let div = document.createElement('div')
+    div.className = 'col-md-6 my-4 '
+    div.id = res.id
+
+    div.innerHTML =`<div class="card h-100">
+						<div class="card-header bg-primary text-white">
+							<h2>${newPost.title}</h2>
+						</div>
+						<div class="card-body">
+							<p>${newPost.body}</p>
+						</div>
+						<div class="card-footer bg-light d-flex justify-content-between">
+							<button class="btn btn-success btn-sm" onclick="Onedit(this)">Edit</button>
+							<button type="button" class="btn btn-danger btn-sm" onclick="Onremove(this)">Remove</button>
+						</div>
+					</div>`
+
+    CardContainer.prepend(div)
+    inputform.reset()
+    spinner.classList.add('d-none')
+
+    snackbar(`The new Post Id ${res.id} is Added Successfully !!` , 'success')
+}
+
+
+
+function Onedit(ele){
+
+    spinner.classList.remove('d-none')
+
+    let editId = ele.closest('.col-md-6').id
+
+
+    localStorage.setItem('EditId',editId)
+
+    let Edit_Url = `${Base_Url}/${editId}`
+
+    let xhr = new XMLHttpRequest()
+    xhr.open('GET',Edit_Url)
+
+    xhr.send(null)
+
+    xhr.onload = function(){
+        if(xhr.status >= 200 && xhr.status <= 299){
+            let editObj = JSON.parse(xhr.response)
+
+            title.value = editObj.title
+            body.value = editObj.body
+            userId.value = editObj.userId
+
+
+            Addpost.classList.add('d-none')
+            Updatepost.classList.remove('d-none')
+
+
+        }
+
+    spinner.classList.add('d-none')
+
+    }
+
+}
+
+function onupdate(){
+    spinner.classList.remove('d-none')
+
+    let updateId = localStorage.getItem('EditId')
+
+    let updateObj ={
+        title : title.value,
+        body : body.value,
+        userId : userId.value,
+        id : updateId
+    }
+
+    let update_url = `${Base_Url}/${updateId}`
+
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('PUT',update_url)
+
+    xhr.send(updateObj)
+
+
+    xhr.onload = function (){
+        if(xhr.status >= 200 && xhr.status <= 299){
+
+            let div = document.getElementById(updateId)
+
+            let h2 = div.querySelector('.card-header h2')
+            h2.innerText = updateObj.title
+
+            let p = div.querySelector('.card-body p')
+
+            p.innerText = updateObj.body
+
+            Addpost.classList.remove('d-none')
+            Updatepost.classList.add('d-none')
+
+            inputform.reset()
+
+            snackbar(`The  Post Id ${updateId} is Updated Successfully !!` , 'success')
+
+        }
+
+
+         spinner.classList.add('d-none')
+
+    }
+
+
+}
+
+function Onremove(ele){
+    spinner.classList.remove('d-none')
+
+    let removeId = ele.closest('.col-md-6').id
+
+    let removeUrl = `${Base_Url}/${removeId}`
+
+    let xhr = new XMLHttpRequest()
+
+    xhr.open('DELETE',removeUrl)
+
+    xhr.send()
+
+    xhr.onload = function (){
+        if(xhr.status >= 200 && xhr.status <= 299){
+
+            ele.closest('.col-md-6').remove()
+            
+            snackbar(`The  Post Id ${removeId} is Removed Successfully !!` , 'success')
+
+
+        }
+
+
+         spinner.classList.add('d-none')
+
+    }
+
+}
+
+
+inputform.addEventListener('submit',onsubmit)
+Updatepost.addEventListener('click',onupdate)
+
