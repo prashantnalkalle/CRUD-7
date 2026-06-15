@@ -41,8 +41,14 @@ function fetchposts(){
             CreatePostCards(postArr.reverse())
 
         }
+
+
+        spinner.classList.add('d-none')
+
     }
 
+    spinner.classList.add('d-none')
+    
 
 }
 
@@ -70,7 +76,6 @@ function CreatePostCards(arr){
     });
     CardContainer.innerHTML = result
 
-    spinner.classList.add('d-none')
 
 }
 
@@ -97,9 +102,13 @@ function onsubmit(ele){
 
             CreateNewPost(newPost,res)
         }
+
+        spinner.classList.add('d-none')
+
     }
 
 
+    spinner.classList.add('d-none')
 
 
 }
@@ -126,7 +135,6 @@ function CreateNewPost(newPost,res){
 
     CardContainer.prepend(div)
     inputform.reset()
-    spinner.classList.add('d-none')
 
     snackbar(`The new Post Id ${res.id} is Added Successfully !!` , 'success')
 }
@@ -164,9 +172,13 @@ function Onedit(ele){
 
         }
 
-    spinner.classList.add('d-none')
+        spinner.classList.add('d-none')
 
     }
+
+
+    spinner.classList.add('d-none')
+
 
 }
 
@@ -217,6 +229,8 @@ function onupdate(){
 
     }
 
+    spinner.classList.add('d-none')
+
 
 }
 
@@ -225,28 +239,42 @@ function Onremove(ele){
 
     let removeId = ele.closest('.col-md-6').id
 
-    let removeUrl = `${Base_Url}/${removeId}`
-
-    let xhr = new XMLHttpRequest()
-
-    xhr.open('DELETE',removeUrl)
-
-    xhr.send()
-
-    xhr.onload = function (){
-        if(xhr.status >= 200 && xhr.status <= 299){
-
-            ele.closest('.col-md-6').remove()
+    Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
             
-            snackbar(`The  Post Id ${removeId} is Removed Successfully !!` , 'success')
+            let removeUrl = `${Base_Url}/${removeId}`
+
+            let xhr = new XMLHttpRequest()
+
+            xhr.open('DELETE',removeUrl)
+
+            xhr.send()
+
+            xhr.onload = function (){
+                if(xhr.status >= 200 && xhr.status <= 299){
+
+                    ele.closest('.col-md-6').remove()
+                    
+                    snackbar(`The  Post Id ${removeId} is Removed Successfully !!` , 'success')
 
 
+                }
+
+
+                spinner.classList.add('d-none')
+
+            }
         }
-
-
-         spinner.classList.add('d-none')
-
-    }
+    });
+    spinner.classList.add('d-none')
 
 }
 

@@ -15,15 +15,15 @@
 							<form action="" id="inputform">
 								<div class="form-group">
 									<label for="title" class="font-weight-bold">Title*</label>
-									<input type="text" class="form-control" id="title">
+									<input type="text" required class="form-control" id="title">
 								</div>
 								<div class="form-group">
 									<label for="body" class="font-weight-bold">Body*</label>
-									<textarea rows="4" class="form-control" id="body"></textarea>
+									<textarea rows="4" required class="form-control" id="body"></textarea>
 								</div>
 								<div class="form-group">
 									<label for="userId" class="font-weight-bold">UserId*</label>
-									<select class="form-control" id="userId">
+									<select class="form-control" required id="userId">
 										<option value="1">1</option>
 										<option value="2">2</option>
 										<option value="3">3</option>
@@ -45,21 +45,7 @@
 				</div>
 			</div>
 			<div class="row mt-4" id="CardContainer">
-				<!-- <div class="col-md-6">
-					<div class="card">
-						<div class="card-header bg-primary text-white">
-							<h2></h2>
-						</div>
-						<div class="card-body bg-secondary text-white">
-							<p></p>
-						</div>
-						<div class="card-footer">
-							<button class="btn btn-danger btn-sm" onclick="Onedit(this)">Edit</button>
-							<button type="button" class="btn btn-primary btn-sm" onclick="Onremove(this)">Edit</button>
-						</div>
-					</div>
-				</div> -->
-
+				
 			</div>
 		</div>
 		<div class="spinner d-none" id="spinner">
