@@ -19,7 +19,7 @@ function snackbar(msg,icon){
     swal.fire({
         title : msg,
         icon : icon,
-        timer : 3000
+        timer : 2000
     })
 }
 
@@ -39,6 +39,9 @@ function fetchposts(){
 
 
             CreatePostCards(postArr.reverse())
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
 
         }
 
@@ -47,7 +50,6 @@ function fetchposts(){
 
     }
 
-    spinner.classList.add('d-none')
     
 
 }
@@ -61,7 +63,7 @@ function CreatePostCards(arr){
     arr.forEach(ele => {
         result +=`<div class="col-md-6 my-4" id='${ele.id}'>
 					<div class="card h-100 ">
-						<div class="card-header bg-primary text-white">
+						<div class="card-header bg-primary text-white" data-toggle="tooltip" data-placement="top" title="${ele.title}">
 							<h2>${ele.title}</h2>
 						</div>
 						<div class="card-body  ">
@@ -101,16 +103,12 @@ function onsubmit(ele){
             let res = JSON.parse(xhr.response)
 
             CreateNewPost(newPost,res)
+            $(function () {
+             $('[data-toggle="tooltip"]').tooltip()
+            })
         }
-
         spinner.classList.add('d-none')
-
     }
-
-
-    spinner.classList.add('d-none')
-
-
 }
 
 
@@ -121,7 +119,7 @@ function CreateNewPost(newPost,res){
     div.id = res.id
 
     div.innerHTML =`<div class="card h-100">
-						<div class="card-header bg-primary text-white">
+						<div class="card-header bg-primary text-white" data-toggle="tooltip" data-placement="top" title="${newPost.title}">
 							<h2>${newPost.title}</h2>
 						</div>
 						<div class="card-body">
@@ -168,16 +166,14 @@ function Onedit(ele){
 
             Addpost.classList.add('d-none')
             Updatepost.classList.remove('d-none')
-
-
+            inputform.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+            });
         }
-
         spinner.classList.add('d-none')
 
     }
-
-
-    spinner.classList.add('d-none')
 
 
 }
@@ -222,20 +218,23 @@ function onupdate(){
 
             snackbar(`The  Post Id ${updateId} is Updated Successfully !!` , 'success')
 
+            div.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+
+            div.classList.add('highlight');
+
+            setTimeout(() => {
+                div.classList.remove('highlight');
+            }, 4000);
+
         }
-
-
-         spinner.classList.add('d-none')
-
+        spinner.classList.add('d-none')
     }
-
-    spinner.classList.add('d-none')
-
-
 }
 
 function Onremove(ele){
-    spinner.classList.remove('d-none')
 
     let removeId = ele.closest('.col-md-6').id
 
@@ -249,7 +248,8 @@ function Onremove(ele){
     confirmButtonText: "Yes, delete it!"
     }).then((result) => {
         if (result.isConfirmed) {
-            
+            spinner.classList.remove('d-none')
+                
             let removeUrl = `${Base_Url}/${removeId}`
 
             let xhr = new XMLHttpRequest()
@@ -274,7 +274,6 @@ function Onremove(ele){
             }
         }
     });
-    spinner.classList.add('d-none')
 
 }
 
